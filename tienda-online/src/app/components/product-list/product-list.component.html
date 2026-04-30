@@ -1,0 +1,126 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="bi bi-grid me-2"></i>{{ 'nav.products' | translate }}</h1>
+    <p>{{ productosFiltrados.length }} {{ 'search.results' | translate }}</p>
+  </div>
+</div>
+
+<div class="page-wrapper pt-0">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- SIDEBAR FILTROS -->
+      <div class="col-lg-3">
+        <div class="filter-sidebar">
+          <div class="filter-title">
+            <i class="bi bi-funnel me-2"></i>{{ 'search.filterBy' | translate }}
+          </div>
+
+          <!-- Categorías -->
+          <p class="fw-bold mb-2" style="color: var(--text-primary); font-size:.9rem">Categorías</p>
+          @for (cat of categorias; track cat.id) {
+            <label class="filter-option">
+              <input type="checkbox" [(ngModel)]="cat['checked']" (change)="applyFilters()">
+              {{ getCatName(cat.nombre) }}
+            </label>
+          }
+
+          <hr style="border-color: var(--border-color); margin: 1rem 0">
+
+          <!-- Marcas -->
+          <p class="fw-bold mb-2" style="color: var(--text-primary); font-size:.9rem">Marcas</p>
+          @for (marca of marcas; track marca.id) {
+            <label class="filter-option">
+              <input type="checkbox" [(ngModel)]="marca['checked']" (change)="applyFilters()">
+              {{ marca.nombre }}
+            </label>
+          }
+
+          <hr style="border-color: var(--border-color); margin: 1rem 0">
+
+          <!-- Precio -->
+          <p class="fw-bold mb-2" style="color: var(--text-primary); font-size:.9rem">Precio máximo: {{ maxPrecio }}€</p>
+          <input type="range" class="form-range" min="0" max="2500" step="50"
+            [(ngModel)]="maxPrecio" (input)="applyFilters()"
+            style="accent-color: var(--primary)">
+          <div class="d-flex justify-content-between" style="font-size:.75rem; color: var(--text-muted)">
+            <span>0€</span><span>2500€</span>
+          </div>
+
+          <button class="btn btn-sm w-100 mt-3 rounded-pill"
+            style="background: var(--primary); color: white; border:none"
+            (click)="resetFilters()">
+            <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+          </button>
+        </div>
+      </div>
+
+      <!-- LISTADO -->
+      <div class="col-lg-9">
+        <!-- Ordenar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <span style="color: var(--text-secondary); font-size:.9rem">
+            {{ productosFiltrados.length }} {{ 'search.results' | translate }}
+          </span>
+          <select class="form-select form-select-sm rounded-pill"
+            style="background: var(--input-bg); color: var(--text-primary); border-color: var(--border-color); width: auto"
+            [(ngModel)]="sortBy" (change)="applyFilters()">
+            <option value="default">{{ 'search.sortBy' | translate }}</option>
+            <option value="nameAsc">{{ 'search.sort.nameAsc' | translate }}</option>
+            <option value="nameDesc">{{ 'search.sort.nameDesc' | translate }}</option>
+            <option value="priceAsc">{{ 'search.sort.priceAsc' | translate }}</option>
+            <option value="priceDesc">{{ 'search.sort.priceDesc' | translate }}</option>
+          </select>
+        </div>
+
+        @if (productosFiltrados.length === 0) {
+          <div class="text-center py-5">
+            <i class="bi bi-search no-results-icon d-block mb-3"></i>
+            <h5 style="color: var(--text-secondary)">No se encontraron productos</h5>
+          </div>
+        }
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+          @for (p of productosFiltrados; track p.id; let i = $index) {
+            <div class="col" [reveal]="true" [revealDelay]="(i % 6) * 70">
+              <div class="product-card" tilt [routerLink]="['/producto', p.id]">
+                <div class="product-img-wrapper">
+                  <span class="stock-badge"
+                    [class.bg-success]="p.stock > 0"
+                    [class.bg-danger]="p.stock === 0"
+                    style="color:white">
+                    {{ p.stock > 0 ? ('product.stock' | translate) : ('product.outOfStock' | translate) }}
+                  </span>
+                  <img [src]="p.imagen" [alt]="p.nombre" class="product-img"
+                    (error)="onImgError($event)">
+                </div>
+                <div class="product-body">
+                  <span class="brand-badge">{{ p.marca }}</span>
+                  <h5 class="product-title">{{ p.nombre }}</h5>
+                  <p class="product-desc">{{ p.descripcion }}</p>
+                  <div class="d-flex align-items-center gap-1 mb-2">
+                    @for (s of getStars(p.valoracion ?? 0); track $index) {
+                      <i class="bi bi-star-fill stars"></i>
+                    }
+                    <span style="font-size:.75rem; color: var(--text-muted)">({{ p.num_resenas }})</span>
+                  </div>
+                  <span class="product-price">{{ p.precio | currency:'EUR':'symbol':'1.0-0' }}</span>
+                </div>
+                <button class="btn btn-cart w-100" ripple (click)="addToCart($event, p)">
+                  <i class="bi bi-cart-plus me-2"></i>{{ 'product.addToCart' | translate }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+@if (toastVisible()) {
+  <div class="toast-success">
+    <i class="bi bi-check-circle me-2"></i>{{ toastMsg() }}
+  </div>
+}

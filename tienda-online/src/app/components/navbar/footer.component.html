@@ -1,0 +1,50 @@
+<footer class="footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <span class="footer-brand d-block mb-2">
+          <i class="bi bi-lightning-charge-fill me-1"></i>TechStore
+        </span>
+        <p style="color: var(--footer-text); opacity:.6; font-size:.9rem">
+          Tu tienda de tecnología online. Los mejores productos al mejor precio.
+        </p>
+        <p style="color: var(--footer-text); opacity:.4; font-size:.75rem">
+          <i class="bi bi-mortarboard me-1"></i>{{ 'footer.tfg' | translate }}
+        </p>
+      </div>
+      <div class="col-6 col-md-2">
+        <p class="footer-title">Categorías</p>
+        <a routerLink="/categoria/1" class="footer-link">Smartphones</a>
+        <a routerLink="/categoria/2" class="footer-link">Portátiles</a>
+        <a routerLink="/categoria/3" class="footer-link">Tablets</a>
+        <a routerLink="/categoria/4" class="footer-link">Televisores</a>
+      </div>
+      <div class="col-6 col-md-2">
+        <p class="footer-title">Más</p>
+        <a routerLink="/categoria/5" class="footer-link">Auriculares</a>
+        <a routerLink="/categoria/6" class="footer-link">Smartwatches</a>
+        <a routerLink="/categoria/7" class="footer-link">Consolas</a>
+        <a routerLink="/categoria/8" class="footer-link">Accesorios</a>
+      </div>
+      <div class="col-md-2">
+        <p class="footer-title">Cuenta</p>
+        <a routerLink="/login" class="footer-link">Iniciar sesión</a>
+        <a routerLink="/registro" class="footer-link">Registrarse</a>
+        <a routerLink="/carrito" class="footer-link">Mi carrito</a>
+      </div>
+      <div class="col-md-2">
+        <p class="footer-title">Redes</p>
+        <div class="d-flex gap-3">
+          @for (icon of socialIcons; track icon) {
+            <i class="bi {{ icon }} fs-5" style="color: var(--footer-text); opacity:.5; cursor:pointer; transition: opacity .2s"
+              onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5"></i>
+          }
+        </div>
+      </div>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-bottom">
+      <p class="mb-0">© {{ year }} TechStore — {{ 'footer.rights' | translate }}</p>
+    </div>
+  </div>
+</footer>

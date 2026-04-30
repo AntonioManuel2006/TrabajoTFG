@@ -1,0 +1,87 @@
+<div class="page-header">
+  <div class="container">
+    <h1>
+      <i class="bi {{ categoria?.icono }} me-2"></i>{{ getCatName() }}
+    </h1>
+    <p>{{ productos.length }} productos disponibles</p>
+  </div>
+</div>
+
+<div class="page-wrapper pt-0">
+  <div class="container">
+
+    <!-- Otras categorías -->
+    <div class="mb-4">
+      <div class="d-flex gap-2 flex-wrap">
+        @for (cat of todasCategorias; track cat.id) {
+          <a [routerLink]="['/categoria', cat.id]"
+            class="btn btn-sm rounded-pill"
+            [style.background]="cat.id === categoriaId ? 'var(--primary)' : 'var(--bg-card)'"
+            [style.color]="cat.id === categoriaId ? 'white' : 'var(--text-secondary)'"
+            [style.border]="'1px solid ' + (cat.id === categoriaId ? 'var(--primary)' : 'var(--border-color)')">
+            <i class="bi {{ cat.icono }} me-1"></i>{{ getCatNameById(cat.nombre) }}
+          </a>
+        }
+      </div>
+    </div>
+
+    <!-- Ordenar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <span style="color: var(--text-secondary); font-size:.9rem">{{ productos.length }} resultados</span>
+      <select class="form-select form-select-sm rounded-pill"
+        style="background: var(--input-bg); color: var(--text-primary); border-color: var(--border-color); width: auto"
+        [(ngModel)]="sortBy" (change)="applySort()">
+        <option value="default">{{ 'search.sortBy' | translate }}</option>
+        <option value="nameAsc">{{ 'search.sort.nameAsc' | translate }}</option>
+        <option value="priceAsc">{{ 'search.sort.priceAsc' | translate }}</option>
+        <option value="priceDesc">{{ 'search.sort.priceDesc' | translate }}</option>
+      </select>
+    </div>
+
+    @if (productos.length === 0) {
+      <div class="text-center py-5">
+        <i class="bi bi-inbox no-results-icon d-block mb-3"></i>
+        <h5 style="color: var(--text-secondary)">Sin productos en esta categoría</h5>
+      </div>
+    } @else {
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 g-4 fade-in">
+        @for (p of productos; track p.id) {
+          <div class="col">
+            <div class="product-card" [routerLink]="['/producto', p.id]">
+              <div class="product-img-wrapper">
+                <span class="stock-badge"
+                  [class.bg-success]="p.stock > 0"
+                  [class.bg-danger]="p.stock === 0"
+                  style="color:white">
+                  {{ p.stock > 0 ? ('product.stock' | translate) : ('product.outOfStock' | translate) }}
+                </span>
+                <img [src]="p.imagen" [alt]="p.nombre" class="product-img">
+              </div>
+              <div class="product-body">
+                <span class="brand-badge">{{ p.marca }}</span>
+                <h5 class="product-title">{{ p.nombre }}</h5>
+                <p class="product-desc">{{ p.descripcion }}</p>
+                <div class="d-flex align-items-center gap-1 mb-2">
+                  @for (s of getStars(p.valoracion ?? 0); track $index) {
+                    <i class="bi bi-star-fill stars"></i>
+                  }
+                  <span style="font-size:.75rem; color: var(--text-muted)">({{ p.num_resenas }})</span>
+                </div>
+                <span class="product-price">{{ p.precio | currency:'EUR':'symbol':'1.0-0' }}</span>
+              </div>
+              <button class="btn btn-cart w-100" (click)="addToCart($event, p)">
+                <i class="bi bi-cart-plus me-2"></i>{{ 'product.addToCart' | translate }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+@if (toastVisible()) {
+  <div class="toast-success">
+    <i class="bi bi-check-circle me-2"></i>{{ toastMsg() }}
+  </div>
+}

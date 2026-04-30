@@ -1,0 +1,90 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="bi bi-search me-2"></i>{{ 'search.title' | translate }}</h1>
+    <p>"{{ query }}" — {{ resultados.length }} {{ 'search.results' | translate }}</p>
+  </div>
+</div>
+
+<div class="page-wrapper pt-0">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Filtros sidebar -->
+      <div class="col-lg-3">
+        <div class="filter-sidebar">
+          <div class="filter-title">
+            <i class="bi bi-funnel me-2"></i>{{ 'search.sortBy' | translate }}
+          </div>
+          @for (opt of sortOptions; track opt.value) {
+            <label class="filter-option">
+              <input type="radio" name="sort" [value]="opt.value" [(ngModel)]="sortBy" (change)="applySort()">
+              {{ opt.label | translate }}
+            </label>
+          }
+          <hr style="border-color: var(--border-color)">
+          <div class="filter-title">Precio máx: {{ maxPrecio }}€</div>
+          <input type="range" class="form-range" min="0" max="2500" step="50"
+            [(ngModel)]="maxPrecio" (input)="applySort()"
+            style="accent-color: var(--primary)">
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div class="col-lg-9">
+        @if (resultados.length === 0) {
+          <div class="text-center py-5 fade-in">
+            <i class="bi bi-search no-results-icon d-block mb-3"></i>
+            <h5 style="color: var(--text-secondary)">{{ 'search.noResults' | translate }} "{{ query }}"</h5>
+            <p style="color: var(--text-muted)">Intenta con otro término de búsqueda</p>
+            <a routerLink="/productos" class="btn-primary-custom mt-2 d-inline-block">Ver todos los productos</a>
+          </div>
+        } @else {
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <span style="color: var(--text-secondary); font-size:.9rem">
+              {{ resultados.length }} resultados para "<strong style="color: var(--text-primary)">{{ query }}</strong>"
+            </span>
+          </div>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4 fade-in">
+            @for (p of resultadosFiltrados; track p.id) {
+              <div class="col">
+                <div class="product-card" [routerLink]="['/producto', p.id]">
+                  <div class="product-img-wrapper">
+                    <span class="stock-badge"
+                      [class.bg-success]="p.stock > 0"
+                      [class.bg-danger]="p.stock === 0"
+                      style="color:white">
+                      {{ p.stock > 0 ? ('product.stock' | translate) : ('product.outOfStock' | translate) }}
+                    </span>
+                    <img [src]="p.imagen" [alt]="p.nombre" class="product-img">
+                  </div>
+                  <div class="product-body">
+                    <span class="brand-badge">{{ p.marca }}</span>
+                    <h5 class="product-title">{{ p.nombre }}</h5>
+                    <p class="product-desc">{{ p.descripcion }}</p>
+                    <div class="d-flex align-items-center gap-1 mb-2">
+                      @for (s of getStars(p.valoracion ?? 0); track $index) {
+                        <i class="bi bi-star-fill stars"></i>
+                      }
+                      <span style="font-size:.75rem; color: var(--text-muted)">({{ p.num_resenas }})</span>
+                    </div>
+                    <span class="product-price">{{ p.precio | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  </div>
+                  <button class="btn btn-cart w-100" (click)="addToCart($event, p)">
+                    <i class="bi bi-cart-plus me-2"></i>{{ 'product.addToCart' | translate }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>
+
+@if (toastVisible()) {
+  <div class="toast-success">
+    <i class="bi bi-check-circle me-2"></i>{{ toastMsg() }}
+  </div>
+}
