@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.GlobalScope
 import com.example.aplicaciontfg.adapters.CheckoutItemAdapter
 import com.example.aplicaciontfg.database.TiendaDbHelper
 import com.example.aplicaciontfg.databinding.ActivityCheckoutBinding
@@ -103,7 +104,8 @@ class CheckoutActivity : BaseActivity() {
         binding.tvOrderTotal.text = "Total: %.2f€".format(pedido.total)
 
         if (user != null) {
-            lifecycleScope.launch {
+            @Suppress("OPT_IN_USAGE")
+            GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
                 val nombreCompleto = "${user.nombre} ${user.apellidos}"
                 val analysis = GeminiManager.analyzePurchase(capturedItems, pedido.total, nombreCompleto)
                 AirtableManager.updatePurchaseAnalysis(user.email, analysis)
