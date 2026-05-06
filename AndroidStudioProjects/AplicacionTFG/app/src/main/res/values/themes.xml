@@ -15,6 +15,13 @@
 
     <style name="Theme.AplicacionTFG" parent="Base.Theme.AplicacionTFG" />
 
+    <style name="Theme.AplicacionTFG.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/primary</item>
+        <item name="postSplashScreenTheme">@style/Theme.AplicacionTFG</item>
+    </style>
+
     <style name="Theme.AplicacionTFG.Splash" parent="Theme.AplicacionTFG">
         <item name="android:windowBackground">@color/primary</item>
         <item name="android:statusBarColor">@color/primary</item>
